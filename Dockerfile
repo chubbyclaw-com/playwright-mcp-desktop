@@ -139,6 +139,8 @@ RUN \
         fonts-wqy-microhei \
         fonts-arphic-ukai \
         fonts-arphic-uming \
+        # 彩色 emoji 字体（💡✅🚀 等 icon 渲染所需）
+        fonts-noto-color-emoji \
         language-pack-zh-hans \
         language-pack-zh-hans-base
 
