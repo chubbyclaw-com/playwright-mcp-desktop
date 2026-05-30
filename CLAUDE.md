@@ -1,0 +1,8 @@
+- 基于 rules，不要改变 rules 的要求
+- 项目是基于 Ubuntu 24.04 构建一个通过 vnc 访问的有浏览器的环境。
+- 组件列表：
+    - Ubuntu Server 24.04
+    - TigerVNC
+    - noVNC
+    - Google Chrome
+- 代码结构参考 ubuntu-vnc-xfce-g3 项目进行 Dockerfile 构建。

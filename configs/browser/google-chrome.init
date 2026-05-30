@@ -1,0 +1,1 @@
+CHROME_FLAGS='--no-sandbox --disable-gpu --disable-dev-shm-usage --disable-web-security --user-data-dir=/root/.chrome-data --disable-namespace-sandbox'

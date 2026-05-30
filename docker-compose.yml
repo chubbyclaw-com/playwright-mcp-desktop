@@ -1,0 +1,63 @@
+services:
+  mcp-desktop:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BASEIMAGE: ubuntu
+        BASETAG: 24.04
+        ARG_VNC_DISPLAY: ":1"
+        ARG_VNC_PORT: 5901
+        ARG_VNC_RESOLUTION: 1280x720
+        ARG_VNC_COL_DEPTH: 24
+        ARG_VNC_VIEW_ONLY: false
+        ARG_NOVNC_PORT: 6080
+        ARG_PLAYWRIGHT_MCP_PORT: 9999
+        ARG_APT_NO_RECOMMENDS: 1
+        
+    image: mcp-desktop:latest
+    container_name: mcp-desktop
+    hostname: mcp-desktop
+    
+    ports:
+      - "5901:5901"   # VNC 端口
+      - "6080:6080"   # noVNC Web 端口
+      - "9999:9999"   # Playwright MCP 端口
+    
+    volumes:
+      - home-data:/root
+    
+    environment:
+      - VNC_RESOLUTION=1280x720
+      - VNC_COL_DEPTH=24
+      - VNC_PORT=5901
+      - VNC_PASSWORD=${VNC_PASSWORD:-password}  # VNC连接密码，可通过环境变量覆盖
+      - NOVNC_PORT=6080
+      - PLAYWRIGHT_MCP_PORT=9999
+      - CHROME_USER_DATA_DIR=/root/.chrome-userdata
+      - DISPLAY=:1
+      - TZ=Asia/Singapore
+      - NOVNC_HOME=/usr/libexec/novnc
+      # 字体配置
+      - FONTCONFIG_PATH=/etc/fonts
+    
+    restart: unless-stopped
+    
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+    
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -f http://localhost:6080/vnc.html && curl -f http://localhost:9999/sse"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  home-data:
+    driver: local

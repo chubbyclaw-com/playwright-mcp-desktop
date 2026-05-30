@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Terminal
+Comment=Use the command line
+GenericName=Terminal
+Exec=xfce4-terminal
+Icon=utilities-terminal
+Type=Application
+Categories=System;TerminalEmulator;
+StartupNotify=true
