@@ -117,7 +117,7 @@ start_mcp_with_auto_recovery() {
     
     while [ $retry_count -lt $max_retries ]; do
         echo "🚀 启动Playwright MCP服务器 (尝试 $((retry_count + 1))/$max_retries)..."
-        echo "🎭 使用 @playwright/mcp@0.0.34"
+        echo "🎭 使用 @playwright/mcp@latest"
         echo "🌐 SSE端口: ${PLAYWRIGHT_MCP_PORT}"
         echo "🔗 连接到现有 Chrome 实例 (端口: ${REMOTE_DEBUG_PORT})"
         
@@ -129,7 +129,7 @@ start_mcp_with_auto_recovery() {
         fi
         
         # 启动 MCP 服务器
-        if npx @playwright/mcp@0.0.34 \
+        if npx @playwright/mcp@latest \
             --port "${PLAYWRIGHT_MCP_PORT}" \
             --user-data-dir="${CHROME_USER_DATA_DIR}" \
             --browser=chrome \

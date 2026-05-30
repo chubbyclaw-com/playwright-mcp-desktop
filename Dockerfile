@@ -11,12 +11,8 @@ ARG ARG_VNC_VIEW_ONLY=false
 
 # noVNC 相关参数
 ARG ARG_NOVNC_PORT=6080
-ARG ARG_NOVNC_VERSION=1.5.0
-ARG ARG_WEBSOCKIFY_VERSION=0.12.0
-
-# TigerVNC 参数
-ARG ARG_TIGERVNC_VERSION=1.15.0
-ARG ARG_TIGERVNC_DISTRO=x86_64
+ARG ARG_NOVNC_VERSION=1.7.0
+ARG ARG_WEBSOCKIFY_VERSION=0.13.0
 
 # 构建优化参数
 ARG ARG_APT_NO_RECOMMENDS=1
@@ -256,8 +252,8 @@ RUN \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         python3-numpy && \
     # 设置版本变量
-    NOVNC_VERSION="${ARG_NOVNC_VERSION:-1.5.0}" && \
-    WEBSOCKIFY_VERSION="${ARG_WEBSOCKIFY_VERSION:-0.12.0}" && \
+    NOVNC_VERSION="${ARG_NOVNC_VERSION:-1.7.0}" && \
+    WEBSOCKIFY_VERSION="${ARG_WEBSOCKIFY_VERSION:-0.13.0}" && \
     echo "下载 noVNC v${NOVNC_VERSION} 和 websockify v${WEBSOCKIFY_VERSION}" && \
     # 创建noVNC目录
     mkdir -p "${NOVNC_HOME}"/utils/websockify && \
@@ -289,14 +285,20 @@ EXPOSE "${NOVNC_PORT}"
 ####################
 FROM stage_novnc AS stage_browser
 
-# 添加 Google Chrome 官方源并安装
+# 安装 Chromium（原生 amd64/arm64 真·deb，经 xtradeb PPA 提供，规避 snap）
+# Google Chrome 官方仅发布 amd64，arm64 宿主无法安装；改用 Chromium 原生包
+# 软链 google-chrome-stable / google-chrome → chromium，保持既有脚本零改动
 RUN \
     --mount=type=cache,from=stage_cache,sharing=locked,source=/var/cache/apt,target=/var/cache/apt \
     --mount=type=cache,from=stage_cache,sharing=locked,source=/var/lib/apt,target=/var/lib/apt \
-    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+    wget -qO- "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x5301FA4FD93244FBC6F6149982BB6851C64F6880" \
+        | gpg --dearmor -o /usr/share/keyrings/xtradeb.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/xtradeb.gpg] https://ppa.launchpadcontent.net/xtradeb/apps/ubuntu noble main" \
+        > /etc/apt/sources.list.d/xtradeb.list \
     && apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y google-chrome-stable
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y chromium \
+    && ln -sf /usr/bin/chromium /usr/bin/google-chrome-stable \
+    && ln -sf /usr/bin/chromium /usr/bin/google-chrome
 
 #####################
 ### stage_mcp_tools - MCP工具层
@@ -309,7 +311,7 @@ ARG ARG_PLAYWRIGHT_MCP_PORT=3000
 RUN \
     --mount=type=cache,from=stage_cache,sharing=locked,source=/var/cache/apt,target=/var/cache/apt \
     --mount=type=cache,from=stage_cache,sharing=locked,source=/var/lib/apt,target=/var/lib/apt \
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
 
 # 设置环境变量

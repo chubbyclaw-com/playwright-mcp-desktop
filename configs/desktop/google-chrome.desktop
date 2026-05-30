@@ -1,8 +1,8 @@
 [Desktop Entry]
 Version=1.0
-Name=Google Chrome
-Name[zh_CN]=谷歌浏览器
-Name[zh_TW]=Google Chrome
+Name=Chromium
+Name[zh_CN]=Chromium
+Name[zh_TW]=Chromium
 Comment=Access the Internet
 Comment[zh_CN]=访问互联网
 Comment[zh_TW]=瀏覽網際網路
@@ -14,7 +14,7 @@ Exec=/usr/local/bin/start-chrome.sh %U
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=google-chrome
+Icon=chromium
 Categories=Network;WebBrowser;
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
 StartupNotify=true

@@ -135,15 +135,15 @@ maximize_chrome_window() {
         sleep 1
         attempt=$((attempt + 1))
         
-        # 尝试使用wmctrl最大化Chrome窗口
-        if wmctrl -l | grep -i "google chrome" > /dev/null 2>&1; then
-            echo "找到Chrome窗口，正在最大化..."
-            wmctrl -r "Google Chrome" -b add,maximized_vert,maximized_horz 2>/dev/null || \
-            wmctrl -r "google chrome" -b add,maximized_vert,maximized_horz 2>/dev/null || \
-            wmctrl -r "chrome" -b add,maximized_vert,maximized_horz 2>/dev/null
-            
+        # 尝试使用wmctrl最大化浏览器窗口（Chromium 窗口标题/类名为 "Chromium"）
+        if wmctrl -l | grep -i "chrom" > /dev/null 2>&1; then
+            echo "找到浏览器窗口，正在最大化..."
+            wmctrl -r "Chromium" -b add,maximized_vert,maximized_horz 2>/dev/null || \
+            wmctrl -r "chromium" -b add,maximized_vert,maximized_horz 2>/dev/null || \
+            wmctrl -r "Chrome" -b add,maximized_vert,maximized_horz 2>/dev/null
+
             # 也尝试使用xdotool作为备选方案
-            chrome_window_id=$(xdotool search --name "Chrome" 2>/dev/null | head -1)
+            chrome_window_id=$(xdotool search --name "Chromium" 2>/dev/null | head -1)
             if [ -n "$chrome_window_id" ]; then
                 echo "使用xdotool最大化窗口 ID: $chrome_window_id"
                 xdotool windowstate --add MAXIMIZED_VERT MAXIMIZED_HORZ "$chrome_window_id" 2>/dev/null

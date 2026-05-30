@@ -39,17 +39,17 @@ start_browser() {
         log "清理残留的Chrome进程..."
         
         # 1. 清理指定端口的Chrome进程
-        pkill -f "google-chrome.*remote-debugging-port=${REMOTE_DEBUG_PORT}" || true
+        pkill -f "chromium.*remote-debugging-port=${REMOTE_DEBUG_PORT}" || true
         
         # 2. 清理使用相同用户数据目录的Chrome进程
-        pkill -f "google-chrome.*${CHROME_USER_DATA_DIR}" || true
+        pkill -f "chromium.*${CHROME_USER_DATA_DIR}" || true
         
         # 3. 等待进程结束
         sleep 3
         
         # 4. 强制清理遗留进程
-        pkill -9 -f "google-chrome.*remote-debugging-port=${REMOTE_DEBUG_PORT}" || true
-        pkill -9 -f "google-chrome.*${CHROME_USER_DATA_DIR}" || true
+        pkill -9 -f "chromium.*remote-debugging-port=${REMOTE_DEBUG_PORT}" || true
+        pkill -9 -f "chromium.*${CHROME_USER_DATA_DIR}" || true
         
         # 5. 清理锁文件和临时文件
         rm -f "${CHROME_USER_DATA_DIR}/SingletonLock" || true
@@ -110,13 +110,13 @@ stop_browser() {
     
     # 清理所有相关进程（彻底清理）
     log "清理所有Chrome相关进程..."
-    pkill -f "google-chrome.*remote-debugging-port=${REMOTE_DEBUG_PORT}" || true
-    pkill -f "google-chrome.*${CHROME_USER_DATA_DIR}" || true
+    pkill -f "chromium.*remote-debugging-port=${REMOTE_DEBUG_PORT}" || true
+    pkill -f "chromium.*${CHROME_USER_DATA_DIR}" || true
     sleep 2
     
     # 强制清理遗留进程
-    pkill -9 -f "google-chrome.*remote-debugging-port=${REMOTE_DEBUG_PORT}" || true
-    pkill -9 -f "google-chrome.*${CHROME_USER_DATA_DIR}" || true
+    pkill -9 -f "chromium.*remote-debugging-port=${REMOTE_DEBUG_PORT}" || true
+    pkill -9 -f "chromium.*${CHROME_USER_DATA_DIR}" || true
     
     # 清理锁文件
     rm -f "${CHROME_USER_DATA_DIR}/SingletonLock" || true
