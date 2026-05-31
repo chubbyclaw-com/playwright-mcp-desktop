@@ -1,14 +1,8 @@
 [Desktop Entry]
 Version=1.0
 Name=Chromium
-Name[zh_CN]=Chromium
-Name[zh_TW]=Chromium
 Comment=Access the Internet
-Comment[zh_CN]=访问互联网
-Comment[zh_TW]=瀏覽網際網路
 GenericName=Web Browser
-GenericName[zh_CN]=网页浏览器
-GenericName[zh_TW]=網頁瀏覽器
 Keywords=Internet;WWW;Browser;Web;Google;Chrome;
 Exec=/usr/local/bin/start-chrome.sh %U
 Terminal=false
@@ -22,13 +16,8 @@ Actions=new-window;new-private-window;
 
 [Desktop Action new-window]
 Name=New Window
-Name[zh_CN]=新建窗口
-Name[zh_TW]=開新視窗
 Exec=/usr/local/bin/start-chrome.sh
 
 [Desktop Action new-private-window]
 Name=New Incognito Window
-Name[zh_CN]=新建隐身窗口
-Name[zh_TW]=新增無痕式視窗
 Exec=/usr/local/bin/start-chrome.sh --incognito
-

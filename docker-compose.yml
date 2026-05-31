@@ -1,5 +1,5 @@
 services:
-  mcp-desktop:
+  playwright-mcp-desktop:
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,43 +14,43 @@ services:
         ARG_NOVNC_PORT: 6080
         ARG_PLAYWRIGHT_MCP_PORT: 9999
         ARG_APT_NO_RECOMMENDS: 1
-        
-    image: mcp-desktop:latest
-    container_name: mcp-desktop
-    hostname: mcp-desktop
-    
+
+    image: playwright-mcp-desktop:latest
+    container_name: playwright-mcp-desktop
+    hostname: playwright-mcp-desktop
+
     ports:
-      - "5901:5901"   # VNC 端口
-      - "6080:6080"   # noVNC Web 端口
-      - "9999:9999"   # Playwright MCP 端口
-    
+      - "5901:5901"   # VNC port
+      - "6080:6080"   # noVNC web port
+      - "9999:9999"   # Playwright MCP port
+
     volumes:
       - home-data:/root
-    
+
     environment:
       - VNC_RESOLUTION=1280x720
       - VNC_COL_DEPTH=24
       - VNC_PORT=5901
-      - VNC_PASSWORD=${VNC_PASSWORD:-password}  # VNC连接密码，可通过环境变量覆盖
+      - VNC_PASSWORD=${VNC_PASSWORD:-password}  # VNC password, override via env var
       - NOVNC_PORT=6080
       - PLAYWRIGHT_MCP_PORT=9999
       - CHROME_USER_DATA_DIR=/root/.chrome-userdata
       - DISPLAY=:1
       - TZ=Asia/Singapore
       - NOVNC_HOME=/usr/libexec/novnc
-      # 字体配置
+      # Font configuration
       - FONTCONFIG_PATH=/etc/fonts
-    
+
     restart: unless-stopped
-    
-    # 资源限制
+
+    # Resource limits
     deploy:
       resources:
         limits:
           memory: 4G
           cpus: '2.0'
-    
-    # 健康检查
+
+    # Health check
     healthcheck:
       test: ["CMD", "sh", "-c", "curl -f http://localhost:6080/vnc.html && curl -f http://localhost:9999/sse"]
       interval: 30s

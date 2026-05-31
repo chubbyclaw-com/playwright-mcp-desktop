@@ -1,67 +1,67 @@
 #!/bin/bash
 
 # Chrome startup script
-# 参考 ubuntu-vnc-xfce-g3 项目的简化配置
+# Simplified configuration inspired by the ubuntu-vnc-xfce-g3 project.
 
-# 设置显示相关环境变量
+# Display-related environment variables
 export DISPLAY=${DISPLAY:-:1}
 export LIBGL_ALWAYS_INDIRECT=1
 
-# 设置X11授权文件路径
+# X11 authority file path
 export XAUTHORITY=${XAUTHORITY:-/root/.Xauthority}
 
-# 设置字体配置路径，确保能加载中文字体
+# Fontconfig path so CJK fonts can be loaded
 export FONTCONFIG_PATH=/etc/fonts
 
-# 设置Chrome用户数据目录
+# Chrome user-data directory
 CHROME_USER_DATA_DIR=${CHROME_USER_DATA_DIR:-/opt/chrome-userdata}
 
-# 创建必要的目录
+# Create required directories
 mkdir -p "$CHROME_USER_DATA_DIR"
 chmod 755 "$CHROME_USER_DATA_DIR"
 
-# 等待X服务器就绪
-echo "等待X服务器就绪..."
+# Wait for the X server to be ready
+echo "Waiting for the X server..."
 count=0
 while ! xdpyinfo >/dev/null 2>&1 && [ $count -lt 30 ]; do
     sleep 1
     count=$((count + 1))
-    echo "等待X服务器... ($count/30)"
+    echo "Waiting for the X server... ($count/30)"
 done
 
 if ! xdpyinfo >/dev/null 2>&1; then
-    echo "错误：X服务器未就绪，无法启动Chrome"
+    echo "Error: X server not ready, cannot start Chrome"
     exit 1
 fi
 
-echo "X服务器已就绪"
+echo "X server is ready"
 
-# 设置额外的环境变量以解决显示问题
+# Extra environment variables to work around display issues
 export NO_AT_BRIDGE=1
 export QTWEBENGINE_DISABLE_SANDBOX=1
 
-# 验证X11授权
+# Verify the X11 authority file
 if [ ! -f "$XAUTHORITY" ]; then
-    echo "警告：X11授权文件不存在，创建空授权文件"
+    echo "Warning: X11 authority file missing, creating an empty one"
     touch "$XAUTHORITY"
     chmod 600 "$XAUTHORITY"
 fi
 
-# 测试X11连接
-echo "测试X11连接..."
+# Test the X11 connection
+echo "Testing the X11 connection..."
 if ! xhost >/dev/null 2>&1; then
-    echo "警告：X11连接测试失败，但继续启动Chrome"
+    echo "Warning: X11 connection test failed, starting Chrome anyway"
 fi
 
-# Chrome 启动参数，专门针对VNC环境优化，解决白板问题
-# 参考 ubuntu-vnc-xfce-g3 项目的配置
+# Chrome launch flags tuned for VNC to fix the blank-page issue.
+# Inspired by the ubuntu-vnc-xfce-g3 project.
 CHROME_ARGS=(
-    # 基础安全和沙盒设置
+    # Basic security / sandbox settings
     --no-sandbox
     --disable-setuid-sandbox
     --disable-dev-shm-usage
-    
-    # GPU和渲染设置（解决白板问题的关键）
+
+    # GPU / rendering settings (key to fixing the blank page)
     --disable-gpu
     --disable-gpu-sandbox
     --disable-software-rasterizer
@@ -69,15 +69,15 @@ CHROME_ARGS=(
     --use-gl=swiftshader-webgl
     --enable-features=UseOzonePlatform
     --ozone-platform=x11
-    
-    # 禁用可能导致问题的功能
+
+    # Disable features that can cause problems
     --disable-extensions
     --disable-plugins
     --disable-web-security
     --disable-features=TranslateUI
     --disable-ipc-flooding-protection
-    
-    # 性能和稳定性设置
+
+    # Performance and stability
     --no-first-run
     --disable-default-apps
     --disable-infobars
@@ -85,21 +85,21 @@ CHROME_ARGS=(
     --disable-backgrounding-occluded-windows
     --disable-renderer-backgrounding
     --disable-field-trial-config
-    
-    # 禁用各种警告和提示（包括 --disable-gpu-sandbox 警告）
+
+    # Suppress various warnings and prompts (including the --disable-gpu-sandbox warning)
     --test-type
     --disable-logging
     --silent-debugger-extension-api
-    
-    # 调试和数据目录  
-    # 注意：--remote-debugging-port 通过命令行参数传入，避免重复配置
+
+    # Debug and data directory
+    # Note: --remote-debugging-port is passed on the command line to avoid duplication
     --user-data-dir="$CHROME_USER_DATA_DIR"
-    
-    # 窗口设置 - 确保最大化启动
+
+    # Window settings - start maximized
     --start-maximized
 )
 
-# 查找 Chrome 可执行文件
+# Locate the Chrome / Chromium executable
 if command -v google-chrome-stable &> /dev/null; then
     CHROME_EXEC="google-chrome-stable"
 elif command -v google-chrome &> /dev/null; then
@@ -109,66 +109,66 @@ elif command -v chromium-browser &> /dev/null; then
 elif command -v chromium &> /dev/null; then
     CHROME_EXEC="chromium"
 else
-    echo "错误：未找到 Chrome 或 Chromium 可执行文件"
+    echo "Error: no Chrome or Chromium executable found"
     exit 1
 fi
 
-echo "正在启动 Chrome: $CHROME_EXEC"
-echo "显示设置: DISPLAY=$DISPLAY"
-echo "授权文件: XAUTHORITY=$XAUTHORITY"
-echo "用户数据目录: $CHROME_USER_DATA_DIR"
-echo "使用参数: ${CHROME_ARGS[@]} $@"
+echo "Starting Chrome: $CHROME_EXEC"
+echo "Display: DISPLAY=$DISPLAY"
+echo "Authority file: XAUTHORITY=$XAUTHORITY"
+echo "User-data dir: $CHROME_USER_DATA_DIR"
+echo "Args: ${CHROME_ARGS[@]} $@"
 
-# 最后一次检查显示连接
+# Final check of the display connection
 if ! xdpyinfo >/dev/null 2>&1; then
-    echo "警告：启动时X服务器连接异常，但继续尝试启动Chrome"
+    echo "Warning: X server connection looks off at startup, trying to start Chrome anyway"
 fi
 
-# 自动最大化Chrome窗口的函数
+# Helper to auto-maximize the Chrome window
 maximize_chrome_window() {
-    echo "等待Chrome窗口出现并自动最大化..."
+    echo "Waiting for the Chrome window to appear, then auto-maximizing..."
     local max_attempts=30
     local attempt=0
-    
+
     while [ $attempt -lt $max_attempts ]; do
-        # 等待一秒
+        # Wait one second
         sleep 1
         attempt=$((attempt + 1))
-        
-        # 尝试使用wmctrl最大化浏览器窗口（Chromium 窗口标题/类名为 "Chromium"）
+
+        # Try to maximize with wmctrl (Chromium window title/class is "Chromium")
         if wmctrl -l | grep -i "chrom" > /dev/null 2>&1; then
-            echo "找到浏览器窗口，正在最大化..."
+            echo "Found the browser window, maximizing..."
             wmctrl -r "Chromium" -b add,maximized_vert,maximized_horz 2>/dev/null || \
             wmctrl -r "chromium" -b add,maximized_vert,maximized_horz 2>/dev/null || \
             wmctrl -r "Chrome" -b add,maximized_vert,maximized_horz 2>/dev/null
 
-            # 也尝试使用xdotool作为备选方案
+            # Also try xdotool as a fallback
             chrome_window_id=$(xdotool search --name "Chromium" 2>/dev/null | head -1)
             if [ -n "$chrome_window_id" ]; then
-                echo "使用xdotool最大化窗口 ID: $chrome_window_id"
+                echo "Maximizing window ID $chrome_window_id with xdotool"
                 xdotool windowstate --add MAXIMIZED_VERT MAXIMIZED_HORZ "$chrome_window_id" 2>/dev/null
             fi
-            
-            echo "✅ Chrome窗口已最大化"
+
+            echo "✅ Chrome window maximized"
             return 0
         fi
-        
-        echo "等待Chrome窗口出现... ($attempt/$max_attempts)"
+
+        echo "Waiting for the Chrome window... ($attempt/$max_attempts)"
     done
-    
-    echo "⚠️ 未能在指定时间内找到Chrome窗口进行最大化"
+
+    echo "⚠️ Could not find the Chrome window to maximize in time"
     return 1
 }
 
-# 启动 Chrome
-echo "启动Chrome浏览器..."
+# Start Chrome
+echo "Starting the Chrome browser..."
 
-# 在后台启动Chrome
+# Start Chrome in the background
 "$CHROME_EXEC" "${CHROME_ARGS[@]}" "$@" &
 CHROME_PID=$!
 
-# 在后台运行窗口最大化功能（不阻塞主进程）
+# Run the window-maximize helper in the background (don't block the main process)
 maximize_chrome_window &
 
-# 等待Chrome进程
+# Wait for the Chrome process
 wait $CHROME_PID

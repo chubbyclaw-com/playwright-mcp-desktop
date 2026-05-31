@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# 重置会话管理相关环境变量
+# Reset session-management environment variables
 unset SESSION_MANAGER
 unset DBUS_SESSION_BUS_ADDRESS
 
-# 设置基础环境变量
+# Base environment variables
 export XDG_RUNTIME_DIR=/run/user/0
 export XDG_SESSION_TYPE=x11
 export XDG_SESSION_CLASS=user
@@ -14,39 +14,39 @@ export XDG_DATA_HOME=/root/.local/share
 export XDG_CACHE_HOME=/root/.cache
 export XAUTHORITY=/root/.Xauthority
 
-# 设置字体配置路径
+# Fontconfig path
 export FONTCONFIG_PATH=/etc/fonts
 
-# 启动简化的会话服务（参考ubuntu-vnc-xfce-g3）
-echo "启动会话服务..."
+# Start a minimal session bus (inspired by ubuntu-vnc-xfce-g3)
+echo "Starting session services..."
 if command -v dbus-launch >/dev/null 2>&1; then
     eval $(dbus-launch --sh-syntax)
-    echo "会话服务已启动"
+    echo "Session services started"
 fi
 
-# 加载X资源
+# Load X resources
 [ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
 
-# 设置XFCE特定环境变量
+# XFCE-specific environment variable
 export XFCE_DISABLE_GLIB_LOOP_CHECK=1
 
-# 预先启动一些XFCE服务来避免错误
-echo "预启动XFCE服务..."
+# Pre-start some XFCE services to avoid errors
+echo "Pre-starting XFCE services..."
 
-# 启动xfce4-settings-daemon (避免设置服务器错误)
+# Start xfce4-settings-daemon (avoids settings-server errors)
 if command -v xfce4-settings-daemon >/dev/null 2>&1; then
-    echo "启动xfce4-settings-daemon..."
+    echo "Starting xfce4-settings-daemon..."
     xfce4-settings-daemon &
     sleep 2
 fi
 
-# 启动窗口管理器
+# Start the window manager
 if command -v xfwm4 >/dev/null 2>&1; then
-    echo "启动XFCE窗口管理器..."
+    echo "Starting the XFCE window manager..."
     xfwm4 --daemon &
     sleep 2
 fi
 
-# 启动XFCE桌面环境
-echo "启动XFCE桌面环境..."
+# Start the XFCE desktop
+echo "Starting the XFCE desktop..."
 exec startxfce4
