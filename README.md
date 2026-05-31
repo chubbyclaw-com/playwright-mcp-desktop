@@ -158,6 +158,7 @@ playwright-mcp-desktop/
 
 - Default credentials are for local use. **Set `VNC_PASSWORD`** (and don't expose the ports publicly) before using this anywhere shared.
 - Chromium is installed as a native package (via the xtradeb PPA) so the image builds on both `amd64` and `arm64`; `google-chrome` / `google-chrome-stable` are symlinked to it for script compatibility.
+- The noVNC web desktop defaults to **remote resizing** (the remote desktop auto-fits your browser window) at the **highest image quality**. Adjust it anytime in the noVNC control panel, or edit `configs/novnc/defaults.json`.
 
 ## Credits
 

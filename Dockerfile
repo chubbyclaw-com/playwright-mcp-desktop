@@ -280,6 +280,12 @@ RUN \
     # Clean up temp files
     rm -f /tmp/novnc.tar.gz /tmp/websockify.tar.gz
 
+# Set the default noVNC UI settings: remote resizing (the remote desktop
+# follows the client browser window size) plus the highest image quality.
+# Users can still override these in the noVNC control panel; use mandatory.json
+# instead of defaults.json to force them.
+COPY configs/novnc/defaults.json "${NOVNC_HOME}/defaults.json"
+
 EXPOSE "${NOVNC_PORT}"
 
 ####################

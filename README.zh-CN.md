@@ -158,6 +158,7 @@ playwright-mcp-desktop/
 
 - 默认凭据仅供本地使用。在任何共享环境使用前，**请设置 `VNC_PASSWORD`**（并且不要把端口暴露到公网）。
 - Chromium 以原生包形式安装（通过 xtradeb PPA），因此镜像可在 `amd64` 与 `arm64` 上构建；为兼容脚本，`google-chrome` / `google-chrome-stable` 均软链到它。
+- noVNC 网页桌面默认采用 **remote resizing**（远端桌面自动适配你的浏览器窗口大小）并使用**最高画质**。可随时在 noVNC 控制面板调整，或编辑 `configs/novnc/defaults.json`。
 
 ## 致谢
 
