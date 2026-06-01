@@ -47,12 +47,15 @@ services:
     deploy:
       resources:
         limits:
-          memory: 6G
+          memory: 4G
           cpus: '2.0'
 
     # Health check
+    # Checks the three service ports (VNC/noVNC/MCP) and the Chromium process.
+    # Avoids `curl /sse` (an infinite SSE stream) which leaked one hung process
+    # per interval. Chromium auto-recovery is handled by browser-manager.sh.
     healthcheck:
-      test: ["CMD", "sh", "-c", "curl -f http://localhost:6080/vnc.html && curl -f http://localhost:9999/sse"]
+      test: ["CMD", "/usr/local/bin/healthcheck.sh"]
       interval: 30s
       timeout: 10s
       retries: 3

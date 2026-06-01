@@ -373,7 +373,8 @@ COPY scripts/start-vnc.sh /usr/local/bin/
 COPY scripts/start-novnc.sh /usr/local/bin/
 COPY scripts/start-playwright-mcp.sh /usr/local/bin/
 COPY scripts/browser-manager.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/start-vnc.sh /usr/local/bin/start-novnc.sh /usr/local/bin/start-playwright-mcp.sh /usr/local/bin/browser-manager.sh
+COPY scripts/healthcheck.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/start-vnc.sh /usr/local/bin/start-novnc.sh /usr/local/bin/start-playwright-mcp.sh /usr/local/bin/browser-manager.sh /usr/local/bin/healthcheck.sh
 
 ###############
 ### FINAL STAGE
