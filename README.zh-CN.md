@@ -20,21 +20,21 @@
 
 ## 技术栈
 
-| 组件 | 作用 |
-|------|------|
-| Ubuntu Server 24.04 + XFCE | 基础系统与桌面环境 |
-| TigerVNC | VNC 服务器 |
-| noVNC + websockify | 基于浏览器的 VNC 客户端 |
-| Chromium | agent 驱动的浏览器（原生 amd64/arm64） |
-| `@playwright/mcp` | MCP 服务器，通过 CDP 挂接到 Chromium |
-| Supervisor | 进程管理器 |
+| 组件                       | 作用                                   |
+| -------------------------- | -------------------------------------- |
+| Ubuntu Server 24.04 + XFCE | 基础系统与桌面环境                     |
+| TigerVNC                   | VNC 服务器                             |
+| noVNC + websockify         | 基于浏览器的 VNC 客户端                |
+| Chromium                   | agent 驱动的浏览器（原生 amd64/arm64） |
+| `@playwright/mcp`          | MCP 服务器，通过 CDP 挂接到 Chromium   |
+| Supervisor                 | 进程管理器                             |
 
 ## 端口
 
-| 端口 | 服务 |
-|------|------|
-| `5901` | VNC |
-| `6080` | noVNC（网页界面） |
+| 端口   | 服务                       |
+| ------ | -------------------------- |
+| `5901` | VNC                        |
+| `6080` | noVNC（网页界面）          |
 | `9999` | Playwright MCP（SSE/HTTP） |
 
 ---
@@ -109,15 +109,16 @@ claude mcp add --transport sse playwright-desktop http://localhost:9999/sse
 
 通过环境变量设置（Compose 会从你的 shell 读取 `VNC_PASSWORD`）：
 
-| 变量 | 默认值 | 说明 |
-|------|--------|------|
-| `VNC_PASSWORD` | `password` | VNC 密码；留空则关闭认证 |
-| `VNC_RESOLUTION` | `1280x720` | 桌面分辨率 |
-| `VNC_COL_DEPTH` | `24` | 色深 |
-| `VNC_PORT` | `5901` | VNC 端口 |
-| `NOVNC_PORT` | `6080` | noVNC 网页端口 |
-| `PLAYWRIGHT_MCP_PORT` | `9999` | Playwright MCP 端口 |
-| `CHROME_USER_DATA_DIR` | `/root/.chrome-userdata` | Chrome 配置目录（通过 `home-data` 卷持久化） |
+| 变量                           | 默认值                        | 说明                                                                                                                                                                                                                                    |
+| ------------------------------ | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VNC_PASSWORD`                 | `password`                    | VNC 密码；留空则关闭认证                                                                                                                                                                                                                |
+| `VNC_RESOLUTION`               | `1280x720`                    | 桌面分辨率                                                                                                                                                                                                                              |
+| `VNC_COL_DEPTH`                | `24`                          | 色深                                                                                                                                                                                                                                    |
+| `VNC_PORT`                     | `5901`                        | VNC 端口                                                                                                                                                                                                                                |
+| `NOVNC_PORT`                   | `6080`                        | noVNC 网页端口                                                                                                                                                                                                                          |
+| `PLAYWRIGHT_MCP_PORT`          | `9999`                        | Playwright MCP 端口                                                                                                                                                                                                                     |
+| `PLAYWRIGHT_MCP_ALLOWED_HOSTS` | _未设置_ → `localhost:<端口>` | MCP 端点的 `Host` 头白名单（逗号分隔）。未设置时沿用 `@playwright/mcp` 内建默认（只允许本机）。非本机访问时设置为可达地址，例如 `100.99.99.139:9999,mybox.tail.ts.net:9999`。设 `*` 完全关闭 Host 检查（同时关掉 DNS rebinding 防护）。 |
+| `CHROME_USER_DATA_DIR`         | `/root/.chrome-userdata`      | Chrome 配置目录（通过 `home-data` 卷持久化）                                                                                                                                                                                            |
 
 容器的 `/root` 挂载在命名卷（`home-data`）上，因此浏览器配置、登录态与 cookie 会在重启后保留。
 

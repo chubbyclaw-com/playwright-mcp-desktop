@@ -20,9 +20,9 @@ services:
     hostname: playwright-mcp-desktop
 
     ports:
-      - "5901:5901"   # VNC port
-      - "6080:6080"   # noVNC web port
-      - "9999:9999"   # Playwright MCP port
+      - "5901:5901" # VNC port
+      - "6080:6080" # noVNC web port
+      - "9999:9999" # Playwright MCP port
 
     volumes:
       - home-data:/root
@@ -31,9 +31,15 @@ services:
       - VNC_RESOLUTION=1280x720
       - VNC_COL_DEPTH=24
       - VNC_PORT=5901
-      - VNC_PASSWORD=${VNC_PASSWORD:-password}  # VNC password, override via env var
+      - VNC_PASSWORD=${VNC_PASSWORD:-password} # VNC password, override via env var
       - NOVNC_PORT=6080
       - PLAYWRIGHT_MCP_PORT=9999
+      # Optional: comma-separated Host header allowlist for the MCP endpoint.
+      # Unset → @playwright/mcp's default (localhost:9999) — local-only.
+      # Set when serving from non-localhost, e.g.:
+      #   PLAYWRIGHT_MCP_ALLOWED_HOSTS='100.99.99.139:9999,mybox.tail.ts.net:9999'
+      # Or '*' to disable the Host check entirely (DNS rebinding protection off).
+      - PLAYWRIGHT_MCP_ALLOWED_HOSTS=${PLAYWRIGHT_MCP_ALLOWED_HOSTS:-}
       - CHROME_USER_DATA_DIR=/root/.chrome-userdata
       - DISPLAY=:1
       - TZ=Asia/Singapore
@@ -48,7 +54,7 @@ services:
       resources:
         limits:
           memory: 4G
-          cpus: '2.0'
+          cpus: "2.0"
 
     # Health check
     # Checks the three service ports (VNC/noVNC/MCP) and the Chromium process.

@@ -20,21 +20,21 @@ Unlike the stock headless `@playwright/mcp`, this image gives the browser a full
 
 ## Stack
 
-| Component | Purpose |
-|-----------|---------|
-| Ubuntu Server 24.04 + XFCE | Base OS and desktop environment |
-| TigerVNC | VNC server |
-| noVNC + websockify | Browser-based VNC client |
-| Chromium | The browser the agent drives (native amd64/arm64) |
-| `@playwright/mcp` | The MCP server, attached to Chromium over CDP |
-| Supervisor | Process manager |
+| Component                  | Purpose                                           |
+| -------------------------- | ------------------------------------------------- |
+| Ubuntu Server 24.04 + XFCE | Base OS and desktop environment                   |
+| TigerVNC                   | VNC server                                        |
+| noVNC + websockify         | Browser-based VNC client                          |
+| Chromium                   | The browser the agent drives (native amd64/arm64) |
+| `@playwright/mcp`          | The MCP server, attached to Chromium over CDP     |
+| Supervisor                 | Process manager                                   |
 
 ## Ports
 
-| Port | Service |
-|------|---------|
-| `5901` | VNC |
-| `6080` | noVNC (web UI) |
+| Port   | Service                   |
+| ------ | ------------------------- |
+| `5901` | VNC                       |
+| `6080` | noVNC (web UI)            |
 | `9999` | Playwright MCP (SSE/HTTP) |
 
 ---
@@ -109,15 +109,16 @@ Now ask your agent to navigate, click, and fill forms — and watch it happen at
 
 Set these as environment variables (Compose reads `VNC_PASSWORD` from your shell):
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `VNC_PASSWORD` | `password` | VNC password; empty value disables auth |
-| `VNC_RESOLUTION` | `1280x720` | Desktop resolution |
-| `VNC_COL_DEPTH` | `24` | Color depth |
-| `VNC_PORT` | `5901` | VNC port |
-| `NOVNC_PORT` | `6080` | noVNC web port |
-| `PLAYWRIGHT_MCP_PORT` | `9999` | Playwright MCP port |
-| `CHROME_USER_DATA_DIR` | `/root/.chrome-userdata` | Chrome profile dir (persisted via the `home-data` volume) |
+| Variable                       | Default                      | Description                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------ | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VNC_PASSWORD`                 | `password`                   | VNC password; empty value disables auth                                                                                                                                                                                                                                                                                            |
+| `VNC_RESOLUTION`               | `1280x720`                   | Desktop resolution                                                                                                                                                                                                                                                                                                                 |
+| `VNC_COL_DEPTH`                | `24`                         | Color depth                                                                                                                                                                                                                                                                                                                        |
+| `VNC_PORT`                     | `5901`                       | VNC port                                                                                                                                                                                                                                                                                                                           |
+| `NOVNC_PORT`                   | `6080`                       | noVNC web port                                                                                                                                                                                                                                                                                                                     |
+| `PLAYWRIGHT_MCP_PORT`          | `9999`                       | Playwright MCP port                                                                                                                                                                                                                                                                                                                |
+| `PLAYWRIGHT_MCP_ALLOWED_HOSTS` | _unset_ → `localhost:<port>` | Comma-separated `Host` header allowlist for the MCP endpoint. Unset preserves `@playwright/mcp`'s built-in default (local-only). Set to your reachable host(s) when serving from non-localhost, e.g. `100.99.99.139:9999,mybox.tail.ts.net:9999`. Use `*` to disable the host check entirely (turns off DNS rebinding protection). |
+| `CHROME_USER_DATA_DIR`         | `/root/.chrome-userdata`     | Chrome profile dir (persisted via the `home-data` volume)                                                                                                                                                                                                                                                                          |
 
 The container's `/root` is mounted on a named volume (`home-data`), so the browser profile, logins and cookies persist across restarts.
 
